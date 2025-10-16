@@ -1,0 +1,184 @@
+import React, { useState, useEffect } from 'react';
+import './AdminPage.css'; // Assuming you have a CSS file for styling
+
+const AdminPage = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [newProduct, setNewProduct] = useState({ 
+    name: '', 
+    price: '', 
+    description: '', 
+    image: '', 
+    category: 'Apple' // Default category
+  });
+
+  // --- API Interaction Functions ---
+
+  const fetchProducts = async () => {
+    try {
+      // !!! CORRECTION 1: Fetch products using relative path !!!
+      const response = await fetch('/api/products'); 
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    if (newProduct.name && newProduct.price) {
+      try {
+        // !!! CORRECTION 2: Add product using relative path !!!
+        const response = await fetch('/api/products', { 
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            ...newProduct, 
+            id: Date.now().toString(), // Simple ID generation
+            price: parseFloat(newProduct.price), 
+            isFeatured: false 
+          }),
+        });
+        if (response.ok) {
+          setNewProduct({ name: '', price: '', description: '', image: '', category: 'Apple' });
+          fetchProducts(); // Refresh list
+        } else {
+          alert('Failed to add product. Check server logs.');
+        }
+      } catch (error) {
+        console.error('Error adding product:', error);
+      }
+    }
+  };
+
+  const handleDeleteProduct = async (id) => {
+    if (window.confirm('Are you sure you want to delete this product?')) {
+      try {
+        // !!! CORRECTION 3: Delete product using relative path with ID !!!
+        const response = await fetch(`/api/products/${id}`, { 
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          fetchProducts(); // Refresh list
+        } else {
+          alert('Failed to delete product. Check server logs.');
+        }
+      } catch (error) {
+        console.error('Error deleting product:', error);
+      }
+    }
+  };
+
+  const handleFeatureToggle = async (id, isFeatured) => {
+    try {
+      // !!! CORRECTION 4: Update feature status using relative path with ID !!!
+      const response = await fetch(`/api/products/${id}`, { 
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isFeatured: !isFeatured }),
+      });
+      if (response.ok) {
+        fetchProducts(); // Refresh list
+      } else {
+        alert('Failed to update feature status. Check server logs.');
+      }
+    } catch (error) {
+      console.error('Error updating feature status:', error);
+    }
+  };
+
+  // --- Component Logic and Rendering ---
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Note: No authentication check included here, relying on simple URL protection.
+
+  return (
+    <div className="admin-page">
+      <h1>Admin Dashboard</h1>
+
+      {/* Product Adding Form */}
+      <div className="add-product-section">
+        <h2>Add New Product</h2>
+        <form onSubmit={handleAddProduct} className="add-form">
+          <input 
+            type="text" 
+            name="name" 
+            placeholder="Product Name" 
+            value={newProduct.name} 
+            onChange={handleInputChange} 
+            required 
+          />
+          <input 
+            type="number" 
+            name="price" 
+            placeholder="Price (UGX)" 
+            value={newProduct.price} 
+            onChange={handleInputChange} 
+            required 
+          />
+          <input 
+            type="text" 
+            name="image" 
+            placeholder="Image URL" 
+            value={newProduct.image} 
+            onChange={handleInputChange} 
+          />
+          <textarea
+            name="description" 
+            placeholder="Description" 
+            value={newProduct.description} 
+            onChange={handleInputChange}
+          />
+          <select name="category" value={newProduct.category} onChange={handleInputChange}>
+            <option value="Apple">Apple</option>
+            <option value="Samsung">Samsung</option>
+            <option value="Other">Other</option>
+          </select>
+          <button type="submit">Add Product</button>
+        </form>
+      </div>
+
+      {/* Product List for Management */}
+      <div className="product-management-section">
+        <h2>Manage Products</h2>
+        <ul className="admin-product-list">
+          {products.map(product => (
+            <li key={product.id} className="admin-product-item">
+              <span>{product.name} - ${product.price}</span>
+              <div className="actions">
+                <button 
+                  onClick={() => handleFeatureToggle(product.id, product.isFeatured)}
+                  className={product.isFeatured ? 'featured' : 'not-featured'}
+                >
+                  {product.isFeatured ? 'Unfeature' : 'Feature'}
+                </button>
+                <button 
+                  onClick={() => handleDeleteProduct(product.id)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+};
+
+export default AdminPage;
