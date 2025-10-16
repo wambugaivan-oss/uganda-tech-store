@@ -1,17 +1,7 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "outputDirectory": "frontend/build"
-      }
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
+    // ...
   ],
   "routes": [
     {
@@ -20,7 +10,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html"  <-- Corrected Destination Path
+      "dest": "/index.html"  <-- CHANGE 1: Simple index.html
     }
   ]
 }
