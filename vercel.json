@@ -5,7 +5,7 @@
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
-        "outputDirectory": "frontend/build" 
+        "outputDirectory": "frontend/build"
       }
     },
     {
@@ -14,15 +14,13 @@
     }
   ],
   "routes": [
-    // 1. API route must come first to catch /api/ calls
     {
       "src": "/api/(.*)",
       "dest": "/api/index.js"
     },
-    // 2. Catch-all route for the frontend (must match the outputDirectory)
     {
       "src": "/(.*)",
-      "dest": "/frontend/build/index.html" 
+      "dest": "/frontend/build/index.html"
     }
   ]
 }
