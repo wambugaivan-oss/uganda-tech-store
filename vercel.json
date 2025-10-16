@@ -10,7 +10,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"  <-- CHANGE 1: Simple index.html
+      "dest": "/frontend/build/index.html"  <-- The path I gave you in the last step
     }
   ]
 }
