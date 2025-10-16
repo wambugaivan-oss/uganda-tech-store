@@ -1,0 +1,31 @@
+// src/pages/ProductsPage.js (Modified for API call)
+import React, { useState, useEffect } from 'react';
+// ... other imports
+
+const ProductsPage = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products'); // <-- Change this port if needed
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        setProducts(data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  // ... rest of the component remains the same
+  if (loading) return <h1 className="page-title">Loading Products...</h1>;
+  // ...
+};
