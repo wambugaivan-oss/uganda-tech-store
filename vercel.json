@@ -13,15 +13,14 @@
       "use": "@vercel/node"
     }
   ],
-"routes": [
-  {
-    // Route for the API (must come first)
-    "src": "/api/(.*)",
-    "dest": "/api/index.js"
-  },
-  {
-    // Route for the Frontend (catches all other requests)
-    "src": "/(.*)",
-    "dest": "/index.html"
-  }
-]
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
