@@ -1,18 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "outputDirectory": "frontend/build"
-      }
-    },
-    {
-      "src": "api/index.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/(.*)",
@@ -20,7 +6,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/index.html"  <-- Simplified this line
+      "dest": "/index.html"
     }
   ]
 }
